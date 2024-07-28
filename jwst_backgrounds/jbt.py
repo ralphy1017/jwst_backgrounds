@@ -234,6 +234,7 @@ class background():
         new_spec = f(new_wave)
         return new_spec
 
+
     def plot_background(self, fontsize=16, xrange=(0.6, 30), yrange=(1e-4, 1e4), thisday=None):
         """Plot background data
 
@@ -257,19 +258,22 @@ class background():
             print("The input calendar day {}".format(thisday) + " is not available")
             return
 
-        plt.plot(wave_array, self.bkg_data['nonzodi_bg'], label="ISM")
-        plt.plot(wave_array, self.bkg_data['zodi_bg'][thisday_index, :], label="Zodi")
-        plt.plot(wave_array, self.bkg_data['stray_light_bg'][thisday_index, :], label="Stray light")
-        plt.plot(wave_array, self.bkg_data['thermal_bg'], label="Thermal")
-        plt.plot(wave_array, self.bkg_data['total_bg'][thisday_index, :], label="Total", color='black', lw=3)
+        plt.plot(wave_array, self.bkg_data['nonzodi_bg'], label="ISM", lw=-0.5)
+        plt.plot(wave_array, self.bkg_data['zodi_bg'][thisday_index, :], label="Zodi", lw=-0.5)
+        plt.plot(wave_array, self.bkg_data['stray_light_bg'][thisday_index, :], label="Stray light", lw=-0.5)
+        plt.plot(wave_array, self.bkg_data['thermal_bg'], label="Thermal", lw=-0.5)
+        plt.plot(wave_array, self.bkg_data['total_bg'][thisday_index, :], label="Total", color='black', lw=1)
         plt.xlim(xrange)
         plt.ylim(yrange)
 
-        plt.xlabel("wavelength (micron)", fontsize=fontsize)
-        plt.ylabel("Equivalent in-field radiance (MJy/sr)", fontsize=fontsize)
+        plt.xlabel(r"Wavelength [$\mu$m]", fontsize=fontsize)
+        plt.ylabel("Equivalent in-field radiance [MJy/sr]", fontsize=fontsize)
         plt.title("Background for calendar day " + str(thisday))
         plt.legend()
         plt.yscale('log')
+        plt.xscale('log')
+
+        plt.tick_params(direction='in', which='both', bottom=True, top=True, left=True, right=True)
         plt.show()
 
     def plot_bathtub(self, showthresh=True, showplot=False, showsubbkgs=False, showannotate=True, title=False, label=False):
@@ -329,6 +333,8 @@ class background():
 
         if title:
             plt.title(title)
+            
+        plt.tick_params(direction='in', which='both', bottom=True, top=True, left=True, right=True)
 
         plt.show()
 
@@ -395,7 +401,7 @@ class background():
 
 def get_background(ra, dec, wavelength, thresh=1.1, plot_background=True, plot_bathtub=True, thisday=None,
                    showsubbkgs=False, write_background=True, write_bathtub=True, background_file='background.txt',
-                   bathtub_file='background_versus_day.txt'):
+                   bathtub_file='background_versus_day.txt', xrange=(0.6,30), yrange=(1e-4, 1e4)):
     """
     This is the main method, which serves as a wrapper to get the background data and create plots and outputs with one command.
 
@@ -443,7 +449,7 @@ def get_background(ra, dec, wavelength, thresh=1.1, plot_background=True, plot_b
             return
 
     if plot_background:
-        bkg.plot_background(thisday=thisday)
+        bkg.plot_background(thisday=thisday, xrange=xrange, yrange=yrange)
 
     if write_background:
         bkg.write_background(thisday=thisday, background_file=background_file)
